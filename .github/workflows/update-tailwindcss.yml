@@ -47,23 +47,27 @@ jobs:
           # Download binaries
           curl -f -L -o macos-arm64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-macos-arm64"
           curl -f -L -o macos-x64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-macos-x64"
+          curl -f -L -o linux-arm64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-linux-arm64"
           curl -f -L -o linux-x64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-linux-x64"
           
           # Calculate checksums
           SHA_MACOS_ARM64=$(sha256sum macos-arm64 | awk '{print $1}')
           SHA_MACOS_X64=$(sha256sum macos-x64 | awk '{print $1}')
+          SHA_LINUX_ARM64=$(sha256sum linux-arm64 | awk '{print $1}')
           SHA_LINUX_X64=$(sha256sum linux-x64 | awk '{print $1}')
           
           echo "macos_arm64=$SHA_MACOS_ARM64" >> $GITHUB_OUTPUT
           echo "macos_x64=$SHA_MACOS_X64" >> $GITHUB_OUTPUT
+          echo "linux_arm64=$SHA_LINUX_ARM64" >> $GITHUB_OUTPUT
           echo "linux_x64=$SHA_LINUX_X64" >> $GITHUB_OUTPUT
           
           echo "SHA256 (macOS ARM64): $SHA_MACOS_ARM64"
           echo "SHA256 (macOS x64): $SHA_MACOS_X64"
+          echo "SHA256 (Linux ARM64): $SHA_LINUX_ARM64"
           echo "SHA256 (Linux x64): $SHA_LINUX_X64"
           
           # Clean up
-          rm macos-arm64 macos-x64 linux-x64
+          rm macos-arm64 macos-x64 linux-arm64 linux-x64
 
       - name: Update formula
         if: steps.latest_release.outputs.version != steps.current_version.outputs.current
@@ -72,6 +76,7 @@ jobs:
           VERSION=${{ steps.latest_release.outputs.version }}
           SHA_MACOS_ARM64=${{ steps.checksums.outputs.macos_arm64 }}
           SHA_MACOS_X64=${{ steps.checksums.outputs.macos_x64 }}
+          SHA_LINUX_ARM64=${{ steps.checksums.outputs.linux_arm64 }}
           SHA_LINUX_X64=${{ steps.checksums.outputs.linux_x64 }}
           
           # Update version
@@ -86,6 +91,9 @@ jobs:
           
           # macOS x64
           sed -i "/tailwindcss-macos-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_MACOS_X64\"/;}" Formula/tailwindcss-standalone.rb
+          
+          # Linux ARM64
+          sed -i "/tailwindcss-linux-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_ARM64\"/;}" Formula/tailwindcss-standalone.rb
           
           # Linux x64
           sed -i "/tailwindcss-linux-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_X64\"/;}" Formula/tailwindcss-standalone.rb
