@@ -1,0 +1,101 @@
+name: Update TailwindCSS Version
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest TailwindCSS release
+        id: latest_release
+        run: |
+          set -e
+          RESPONSE=$(curl -sf https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest)
+          LATEST_VERSION=$(echo "$RESPONSE" | jq -r '.tag_name')
+          if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
+            echo "Error: Could not extract version from GitHub API response." >&2
+            exit 1
+          fi
+          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "Latest version: $LATEST_VERSION"
+
+      - name: Check current version
+        id: current_version
+        run: |
+          set -e
+          CURRENT_VERSION=$(sed -n 's/.*version "\([^"]*\)".*/\1/p' Formula/tailwindcss-standalone.rb)
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+
+      - name: Download and calculate SHA256 checksums
+        if: steps.latest_release.outputs.version != steps.current_version.outputs.current
+        id: checksums
+        run: |
+          set -e
+          VERSION=${{ steps.latest_release.outputs.version }}
+          
+          # Download binaries
+          curl -f -L -o macos-arm64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-macos-arm64"
+          curl -f -L -o macos-x64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-macos-x64"
+          curl -f -L -o linux-x64 "https://github.com/tailwindlabs/tailwindcss/releases/download/${VERSION}/tailwindcss-linux-x64"
+          
+          # Calculate checksums
+          SHA_MACOS_ARM64=$(sha256sum macos-arm64 | awk '{print $1}')
+          SHA_MACOS_X64=$(sha256sum macos-x64 | awk '{print $1}')
+          SHA_LINUX_X64=$(sha256sum linux-x64 | awk '{print $1}')
+          
+          echo "macos_arm64=$SHA_MACOS_ARM64" >> $GITHUB_OUTPUT
+          echo "macos_x64=$SHA_MACOS_X64" >> $GITHUB_OUTPUT
+          echo "linux_x64=$SHA_LINUX_X64" >> $GITHUB_OUTPUT
+          
+          echo "SHA256 (macOS ARM64): $SHA_MACOS_ARM64"
+          echo "SHA256 (macOS x64): $SHA_MACOS_X64"
+          echo "SHA256 (Linux x64): $SHA_LINUX_X64"
+          
+          # Clean up
+          rm macos-arm64 macos-x64 linux-x64
+
+      - name: Update formula
+        if: steps.latest_release.outputs.version != steps.current_version.outputs.current
+        run: |
+          set -e
+          VERSION=${{ steps.latest_release.outputs.version }}
+          SHA_MACOS_ARM64=${{ steps.checksums.outputs.macos_arm64 }}
+          SHA_MACOS_X64=${{ steps.checksums.outputs.macos_x64 }}
+          SHA_LINUX_X64=${{ steps.checksums.outputs.linux_x64 }}
+          
+          # Update version
+          sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/tailwindcss-standalone.rb
+          
+          # Update URLs
+          sed -i "s|tailwindcss/releases/download/v[0-9.]\+/|tailwindcss/releases/download/$VERSION/|g" Formula/tailwindcss-standalone.rb
+          
+          # Update SHA256 checksums
+          # macOS ARM64
+          sed -i "/tailwindcss-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_MACOS_ARM64\"/;}" Formula/tailwindcss-standalone.rb
+          
+          # macOS x64
+          sed -i "/tailwindcss-macos-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_MACOS_X64\"/;}" Formula/tailwindcss-standalone.rb
+          
+          # Linux x64
+          sed -i "/tailwindcss-linux-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_X64\"/;}" Formula/tailwindcss-standalone.rb
+
+      - name: Commit and push changes
+        if: steps.latest_release.outputs.version != steps.current_version.outputs.current
+        run: |
+          set -e
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add Formula/tailwindcss-standalone.rb
+          git commit -m "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
+          git push
