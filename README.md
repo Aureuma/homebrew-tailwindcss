@@ -47,3 +47,5 @@ You can also manually trigger the update workflow from the Actions tab.
 ## About
 
 This tap provides an easy way to install the standalone TailwindCSS CLI tool via Homebrew. The formula automatically installs the appropriate binary for your platform from the official [TailwindCSS releases](https://github.com/tailwindlabs/tailwindcss/releases).
+
+For more details on the standalone CLI, refer to the [official Tailwind CSS documentation](https://tailwindcss.com/docs/installation#standalone-cli).
