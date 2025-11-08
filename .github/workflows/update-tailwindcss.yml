@@ -98,7 +98,7 @@ jobs:
           # Linux x64
           sed -i "/tailwindcss-linux-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_X64\"/;}" Formula/tailwindcss-standalone.rb
 
-      - name: Commit and push changes
+      - name: Commit changes
         if: steps.latest_release.outputs.version != steps.current_version.outputs.current
         run: |
           set -e
