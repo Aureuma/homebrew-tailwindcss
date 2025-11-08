@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
     
     steps:
       - name: Checkout repository
@@ -107,13 +106,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add Formula/tailwindcss-standalone.rb
           git commit -m "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
-      - name: Create Pull Request
-        if: steps.latest_release.outputs.version != steps.current_version.outputs.current
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: auto/update-tailwindcss
-          title: "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
-          commit-message: "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
-          body: |
-            Automated update to TailwindCSS version ${{ steps.latest_release.outputs.version }}.
-          labels: auto-update
+          git push
