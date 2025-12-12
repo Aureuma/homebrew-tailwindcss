@@ -106,4 +106,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add Formula/tailwindcss-standalone.rb
           git commit -m "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
-          git push
+          git push origin HEAD:main
