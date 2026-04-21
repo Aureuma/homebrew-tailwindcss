@@ -104,6 +104,8 @@ jobs:
           set -e
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add Formula/tailwindcss-standalone.rb
+          IFS=. read -r major minor patch < VERSION
+          printf '%s.%s.%s\n' "$major" "$minor" "$((patch + 1))" > VERSION
+          git add Formula/tailwindcss-standalone.rb VERSION
           git commit -m "chore: update tailwindcss to ${{ steps.latest_release.outputs.version }}"
           git push origin HEAD:main
