@@ -1,6 +1,7 @@
 # Repo Rules
 
 - Follow the shared workspace rules in `/home/shawn/Development/AGENTS.md`.
+- Keep every `tickets/` directory and all files beneath it ignored by Git. Do not add, force-add, or commit ticket files to version control.
 
 ## Version Source Of Truth
 
