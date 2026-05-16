@@ -14,3 +14,7 @@
 
 - Name new files with stable, descriptive kebab-case unless the repo already has a stricter local convention; keep Viva deploy surfaces predictable with `deploy/viva.<env>.yaml`, `deploy/viva.<component>.<env>.yaml`, and `docker-compose.viva.<env>.yml`.
 - Keep file paths predictable and reviewable: avoid unrelated renames, generated churn, and mixed concerns; when moving or renaming files, update all references in the same change.
+
+
+## Node Package Manager
+- For Node-based workspaces in this repository, the preferred package manager is `pnpm` (use `corepack pnpm ...` by default).
