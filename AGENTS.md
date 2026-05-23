@@ -23,4 +23,4 @@
 - Emojify reports/messages where it improves readability, using relevant emojis only.
 
 ## Implementation Language
-- Prefer Rust by default; use shell scripts only when unavoidable. For web or UI work, use SvelteKit/Svelte with TypeScript/JavaScript only when Rust is not practical.
+- Use Rust as much as possible, and write everything in Rust whenever practical. Avoid shell scripts unless absolutely necessary. For web-based work, or anything that requires a web interface, use SvelteKit/Svelte with TypeScript or JavaScript when it cannot be handled cleanly in Rust.
