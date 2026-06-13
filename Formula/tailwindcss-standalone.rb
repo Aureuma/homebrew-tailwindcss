@@ -1,7 +1,7 @@
 class TailwindcssStandalone < Formula
   desc "Standalone CLI for Tailwind CSS - no Node.js required"
   homepage "https://tailwindcss.com"
-  version "v4.3.0"
+  version "v4.3.1"
   license "MIT"
 
   # NOTE: SHA256 checksums will be automatically updated by the GitHub Actions workflow
@@ -9,21 +9,21 @@ class TailwindcssStandalone < Formula
   # Initial checksums should be updated by running the workflow manually after setup
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.0/tailwindcss-macos-arm64"
-      sha256 "56b4bbc62dbdc4614a78930d9c6986423a2ec63e4e640144a59a5d95c914322e"
+      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.1/tailwindcss-macos-arm64"
+      sha256 "a27c43626185953ee19bdace1939c7601e55da654e0b2fc4461e3e29957aa739"
     else
-      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.0/tailwindcss-macos-x64"
-      sha256 "2ba252f770817091e6d0d12a84e0dd531bcc29aad1bfd9d976a3aff1a071b67a"
+      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.1/tailwindcss-macos-x64"
+      sha256 "e9e830ceb3e70b7e0775a3dd79eee8ec82c6b31270f08f2fa2857d0077045ac3"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.0/tailwindcss-linux-arm64"
-      sha256 "8f48dcb72be3b351c10563c5329b4638ba8516820dc3b3a1609625a166e87cbd"
+      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.1/tailwindcss-linux-arm64"
+      sha256 "3d662377a86d71c43b549dc06b90db4586b4acd412bf827a3268e951661e5adf"
     elsif Hardware::CPU.intel?
-      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.0/tailwindcss-linux-x64"
-      sha256 "73f0e5459054e5cfaa8ab6f3b940f3fbe0f13cc7fd83bc24e7c655033c203400"
+      url "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.1/tailwindcss-linux-x64"
+      sha256 "2526d063ba03b71f9a3ea7d5cee14f0aec147f117f222d5adc97b1d736d45999"
     end
   end
 
