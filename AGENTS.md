@@ -1,7 +1,5 @@
 # Repo Rules
 
-- Follow the shared workspace rules in `/home/shawn/Development/AGENTS.md`.
-
 ## Version Source Of Truth
 
 - Keep one repo-wide version for `homebrew-tailwindcss`.
